@@ -76,6 +76,52 @@
       letter-spacing: 0.1em;
     }
 
+
+    /* ── LIGHT THEME ── */
+    body.light {
+      --bg: #f8f8f5; --bg2: #f0f0ec; --surface: #e8e8e4;
+      --border: rgba(0,0,0,0.08); --border2: rgba(0,0,0,0.15);
+      --text: #0a0a0a; --muted: #999; --muted2: #666;
+      --tag-bg: #e2e2de;
+    }
+    body.light nav { background: rgba(248,248,245,0.88); }
+    body.light .ss-mock { background: linear-gradient(135deg,#e8f4ff,#dbeafe); }
+    body.light .ss-row { background: rgba(0,0,0,0.04); border-color: rgba(0,0,0,0.08); color: #1e3a5f; }
+    body.light .ss-logo { color: #0284c7; }
+    body.light .ss-score { color: #0f172a; }
+    body.light .ss-sub { color: #94a3b8; }
+    body.light .ss-f.dim { background: rgba(0,0,0,0.04); border-color: rgba(0,0,0,0.08); color: #64748b; }
+    body.light .mse-mock { background: linear-gradient(135deg,#f0f4ff,#e8eeff); }
+    body.light .mse-row { background: rgba(0,0,0,0.04); border-color: rgba(0,0,0,0.08); }
+    body.light .mse-name { color: #1e293b; }
+    body.light .mse-label { color: #94a3b8; }
+    body.light .mse-btn { background: rgba(0,0,0,0.06); border-color: rgba(0,0,0,0.1); color: #475569; }
+    body.light .marquee-item { color: #555; }
+    body.light .q-item { color: #888; }
+    body.light #hero { background: none !important; }
+
+    /* ── THEME TOGGLE BUTTON ── */
+    .theme-toggle {
+      width: 38px; height: 38px;
+      border-radius: 8px;
+      border: 1px solid var(--border2);
+      background: var(--surface);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      flex-shrink: 0;
+      opacity: 0; transform: translateY(-8px);
+      animation: navFadeIn 0.5s ease forwards 1.95s;
+    }
+    .theme-toggle:hover { background: var(--bg2); border-color: var(--border2); transform: scale(1.08); }
+    .theme-toggle svg { width: 16px; height: 16px; color: var(--muted2); transition: all 0.3s; }
+    .theme-toggle:hover svg { color: var(--text); }
+    /* rotate sun/moon on toggle */
+    .theme-toggle .icon-sun { display: none; }
+    .theme-toggle .icon-moon { display: block; }
+    body.light .theme-toggle .icon-sun { display: block; }
+    body.light .theme-toggle .icon-moon { display: none; }
+
     /* ── NAV ── */
     nav {
       position: fixed; top: 0; left: 0; right: 0; z-index: 100;
@@ -426,6 +472,22 @@
     <li><a href="#skills">Skills</a></li>
     <li><a href="#contact" class="nav-cta">Contact</a></li>
   </ul>
+  <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+    </svg>
+    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="5"/>
+      <line x1="12" y1="1" x2="12" y2="3"/>
+      <line x1="12" y1="21" x2="12" y2="23"/>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+      <line x1="1" y1="12" x2="3" y2="12"/>
+      <line x1="21" y1="12" x2="23" y2="12"/>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+    </svg>
+  </button>
 </nav>
 
 <!-- HERO -->
@@ -790,6 +852,21 @@
       heroName.style.opacity = 1 - (y / (window.innerHeight * 0.7));
     }
   }, { passive: true });
+
+  /* ── THEME TOGGLE ── */
+  const themeToggle = document.getElementById('themeToggle');
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme === 'light') document.body.classList.add('light');
+
+  themeToggle.addEventListener('click', () => {
+    document.body.classList.toggle('light');
+    const isLight = document.body.classList.contains('light');
+    localStorage.setItem('theme', isLight ? 'light' : 'dark');
+
+    // Animate toggle
+    themeToggle.style.transform = 'scale(0.85) rotate(20deg)';
+    setTimeout(() => { themeToggle.style.transform = ''; }, 200);
+  });
 
   /* ── CURSOR GLOW on hero ── */
   const he
