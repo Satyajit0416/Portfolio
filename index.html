@@ -14,6 +14,60 @@
       --green: #4ade80; --tag-bg: #1a1a1a;
     }
 
+    * { cursor: none !important; }
+.cursor-dot {
+  position: fixed; top: 0; left: 0; z-index: 99999;
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #4ade80;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  transition: width 0.2s ease, height 0.2s ease, opacity 0.2s ease;
+}
+.cursor-ring {
+  position: fixed; top: 0; left: 0; z-index: 99998;
+  width: 36px; height: 36px; border-radius: 50%;
+  border: 1.5px solid rgba(74,222,128,0.5);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  transition: width 0.35s cubic-bezier(0.16,1,0.3,1),
+              height 0.35s cubic-bezier(0.16,1,0.3,1),
+              border-color 0.3s ease, background 0.3s ease;
+}
+.cursor-ring.hovering {
+  width: 64px; height: 64px;
+  background: rgba(74,222,128,0.08);
+  border-color: rgba(74,222,128,0.7);
+}
+.cursor-dot.clicking { width: 5px; height: 5px; }
+.cursor-ring.clicking { width: 48px; height: 48px; background: rgba(74,222,128,0.15); }
+@media (hover: none) {
+  .cursor-dot, .cursor-ring { display: none; }
+  * { cursor: auto !important; }
+}
+
+    /* ── PAGE LOADER ── */
+    #loader {
+      position: fixed; inset: 0; z-index: 9999;
+      background: #0a0a0a;
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: 1.5rem;
+      transition: opacity 0.7s ease, visibility 0.7s ease;
+    }
+    #loader.done { opacity: 0; visibility: hidden; pointer-events: none; }
+    .loader-name {
+      font-family: 'Geist', sans-serif; font-weight: 800;
+      font-size: clamp(2rem, 6vw, 4rem); letter-spacing: -0.04em;
+      display: flex; gap: 0.05em; overflow: hidden;
+    }
+    .loader-name span {
+      display: inline-block;
+      animation: lCharIn 0.6s cubic-bezier(0.16,1,0.3,1) both;
+    }
+    @keyframes lCharIn { from { opacity:0; transform: translateY(40px); } to { opacity:1; transform: translateY(0); } }
+    .loader-bar-wrap { width: 180px; height: 1px; background: rgba(255,255,255,0.1); overflow: hidden; border-radius: 1px; }
+    .loader-bar { height: 100%; background: #4ade80; width: 0%; border-radius: 1px; transition: width 0.1s linear; }
+    .loader-count { font-family: 'Geist Mono', monospace; font-size: 0.72rem; color: #555; letter-spacing: 0.1em; }
+
     /* ── LIGHT THEME ── */
     body.light {
       --bg: #f8f8f5; --bg2: #f0f0ec; --surface: #e8e8e4;
@@ -45,25 +99,26 @@
     nav {
       position: fixed; top: 0; left: 0; right: 0; z-index: 100;
       display: flex; align-items: center; justify-content: space-between;
-      padding: 1.1rem 2.5rem;
+      padding: 1rem 2.5rem;
       background: rgba(10,10,10,0);
       backdrop-filter: blur(0px);
       border-bottom: 1px solid transparent;
       transition: background 0.4s, backdrop-filter 0.4s, border-color 0.4s;
+      gap: 1rem;
     }
     nav.scrolled { background: rgba(10,10,10,0.88); backdrop-filter: blur(20px); border-bottom-color: var(--border); }
-    .nav-logo { font-weight: 700; font-size: 0.95rem; letter-spacing: -0.02em; display: flex; align-items: center; gap: 0.5rem; }
+    .nav-logo { font-weight: 700; font-size: 0.95rem; letter-spacing: -0.02em; display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0; }
     .nav-logo-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
     @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.35} }
-    .nav-links { display: flex; align-items: center; gap: 2rem; list-style: none; }
-    .nav-links a { font-size: 0.82rem; color: var(--muted2); transition: color 0.2s; position: relative; }
+    .nav-links { display: flex; align-items: center; gap: 1.5rem; list-style: none; flex-shrink: 0; }
+    .nav-links a { font-size: 0.82rem; color: var(--muted2); transition: color 0.2s; position: relative; white-space: nowrap; }
     .nav-links a::after { content:''; position:absolute; bottom:-3px; left:0; right:0; height:1px; background:var(--text); transform:scaleX(0); transform-origin:left; transition:transform 0.25s ease; }
     .nav-links a:hover { color: var(--text); }
     .nav-links a:hover::after { transform: scaleX(1); }
-    .nav-cta { padding: 0.5rem 1.2rem; border: 1px solid var(--border2); border-radius: 6px; font-size: 0.82rem; color: var(--text) !important; background: var(--surface); transition: all 0.2s; }
+    .nav-cta { padding: 0.45rem 1rem; border: 1px solid var(--border2); border-radius: 6px; font-size: 0.82rem; color: var(--text) !important; background: var(--surface); transition: all 0.2s; white-space: nowrap; }
     .nav-cta::after { display: none !important; }
     .nav-cta:hover { background: #222 !important; }
-    .nav-right { display: flex; align-items: center; gap: 0.75rem; }
+    .nav-right { display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0; }
 
     /* ── THEME TOGGLE ── */
     .theme-toggle {
@@ -81,7 +136,7 @@
     body.light .theme-toggle .icon-moon { display: none; }
 
     /* ── HERO ── */
-    #hero { min-height: 100vh; display: flex; flex-direction: column; justify-content: flex-end; padding: 0 2.5rem 4rem; position: relative; overflow: hidden; }
+    #hero { min-height: 100vh; display: flex; flex-direction: column; justify-content: flex-end; padding: 5rem 2.5rem 4rem; position: relative; overflow: hidden; }
     #hero::before { content:''; position:absolute; inset:0; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E"); pointer-events:none; z-index:0; opacity:0.6; }
 
     .hero-tags-row { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 1.75rem; position: relative; z-index: 1; }
@@ -270,11 +325,37 @@
     }
   </style>
 </head>
-<body>
+<body style="overflow:hidden">
+
+<div class="cursor-dot" id="cursorDot"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- PAGE LOADER -->
+<div id="loader">
+  <div class="loader-name">
+    <span style="animation-delay:0.00s">S</span>
+    <span style="animation-delay:0.06s">a</span>
+    <span style="animation-delay:0.12s">t</span>
+    <span style="animation-delay:0.18s">y</span>
+    <span style="animation-delay:0.24s">a</span>
+    <span style="animation-delay:0.30s">j</span>
+    <span style="animation-delay:0.36s">i</span>
+    <span style="animation-delay:0.42s">t</span>
+    <span style="animation-delay:0.48s; opacity:0.3">&nbsp;</span>
+    <span style="animation-delay:0.52s">R</span>
+    <span style="animation-delay:0.58s">o</span>
+    <span style="animation-delay:0.64s">u</span>
+    <span style="animation-delay:0.70s">t</span>
+    <span style="animation-delay:0.76s; color:#4ade80">.</span>
+  </div>
+  <div class="loader-bar-wrap"><div class="loader-bar" id="loaderBar"></div></div>
+  <div class="loader-count" id="loaderCount">0%</div>
+</div>
 
 <!-- NAV -->
 <nav id="navbar">
   <div class="nav-logo"><div class="nav-logo-dot"></div>Satyajit Rout</div>
+  <div style="display:flex;align-items:center;gap:1.5rem;">
   <ul class="nav-links">
     <li><a href="#about">About</a></li>
     <li><a href="#projects">Work</a></li>
@@ -286,6 +367,7 @@
       <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
       <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
     </button>
+  </div>
   </div>
 </nav>
 
@@ -518,6 +600,36 @@
 </footer>
 
 <script>
+  /* ── LOADER ── */
+  (function() {
+    var loader = document.getElementById('loader');
+    var bar    = document.getElementById('loaderBar');
+    var count  = document.getElementById('loaderCount');
+    var n = 0;
+
+    function finish() {
+      bar.style.width = '100%';
+      count.textContent = '100%';
+      setTimeout(function() {
+        loader.classList.add('done');
+        document.body.style.overflow = '';
+      }, 500);
+    }
+
+    var tick = setInterval(function() {
+      n += Math.floor(Math.random() * 8) + 4;
+      if (n >= 100) { n = 100; clearInterval(tick); finish(); return; }
+      bar.style.width = n + '%';
+      count.textContent = n + '%';
+    }, 40);
+
+    // Hard fallback: force done after 2.5s no matter what
+    setTimeout(function() {
+      clearInterval(tick);
+      finish();
+    }, 2500);
+  })();
+
   /* ── NAVBAR SCROLL ── */
   const navbar = document.getElementById('navbar');
   window.addEventListener('scroll', () => {
@@ -578,6 +690,27 @@
     themeToggle.style.transform = 'scale(0.85) rotate(20deg)';
     setTimeout(() => { themeToggle.style.transform = ''; }, 200);
   });
+  const dot = document.getElementById('cursorDot');
+const ring = document.getElementById('cursorRing');
+let mx = 0, my = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  dot.style.left = mx + 'px'; dot.style.top = my + 'px';
+});
+function animateRing() {
+  rx += (mx - rx) * 0.1; ry += (my - ry) * 0.1;
+  ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+  requestAnimationFrame(animateRing);
+}
+animateRing();
+document.querySelectorAll('a, button, .project-card, .skill-badge, .stat, .clc, .tech-pill, .hero-tag').forEach(el => {
+  el.addEventListener('mouseenter', () => ring.classList.add('hovering'));
+  el.addEventListener('mouseleave', () => ring.classList.remove('hovering'));
+});
+document.addEventListener('mousedown', () => { dot.classList.add('clicking'); ring.classList.add('clicking'); });
+document.addEventListener('mouseup', () => { dot.classList.remove('clicking'); ring.classList.remove('clicking'); });
+document.addEventListener('mouseleave', () => { dot.style.opacity='0'; ring.style.opacity='0'; });
+document.addEventListener('mouseenter', () => { dot.style.opacity='1'; ring.style.opacity='1'; });
 </script>
 </body>
 </html>
